@@ -1,0 +1,7 @@
+git add .
+git commit -m 'message'
+git remote add origint git-url
+git push origin master
+git update-index --chmod +x
+    //권한 부여하면서 push
+git pull origin
