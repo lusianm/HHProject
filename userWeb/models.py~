@@ -19,6 +19,3 @@ class User(models.Model):
     Height = models.IntegerField()
     Weight = models.IntegerField()
     BMI = models.IntegerField()
-    
-    def __str__(self):
-        return self.userID
