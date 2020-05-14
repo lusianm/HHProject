@@ -21,4 +21,5 @@ class User(models.Model):
     BMI = models.IntegerField()
     
     def __str__(self):
-        return self.userID
+        userText = self.userID+'|'+self.Password+'|'+self.Name+'|'+str(self.Age)+'|'+self.Sex+'|'+self.Job+'|'+str(self.Height)+'|'+str(self.Weight)+'|'+str(self.BMI)
+        return userText
