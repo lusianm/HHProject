@@ -21,4 +21,20 @@ class User(models.Model):
     BMI = models.IntegerField()
     
     def __str__(self):
-        return self.userID
+        userText = self.userID+'|'+self.Password+'|'+self.Name+'|'+str(self.Age)+'|'+self.Sex+'|'+self.Job+'|'+str(self.Height)+'|'+str(self.Weight)+'|'+str(self.BMI)
+        return userText
+
+
+class Exercise(models.Model):
+    Name = models.CharField(max_length=40)
+    class ExerPart_Choices(models.TextChoices):
+        Part1 = "a"
+        Part2 = "b"
+        Part3 = "c"
+        Part4 = "d"
+        Part5 = "e"
+    ExerPart = models.CharField(choices=ExerPart_Choices.choices, max_length=20)
+
+    ExerciseDesc = models.CharField(max_length=200)
+
+    AccuracyLink = models.CharField(max_length=400)
