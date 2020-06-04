@@ -5,3 +5,6 @@ git push origin master
 git update-index --chmod +x
     //권한 부여하면서 push
 git pull origin
+
+server IP : 118.47.27.223:8000~8100
+user setting IP : 192.168.0.6:8000~8100

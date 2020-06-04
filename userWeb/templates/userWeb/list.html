@@ -1,0 +1,9 @@
+{% if exercise %}
+    <ul>
+    {% for exer in exercise %}
+        {{exer}}<br>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
