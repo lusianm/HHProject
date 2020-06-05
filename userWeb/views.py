@@ -6,9 +6,8 @@ def base(request):
     return render(request, 'userWeb/base.html')
 
 def login(request, User_ID):
-    print(User_ID)
     user = User.objects.get(userID=User_ID)
-    return render(request, 'userWeb/login.html', {'user':user.getUserInfo})
+    return render(request, 'userWeb/user.html', {'user':user.getUserInfo})
 
 
 def exercise(request, Exercise_ID, User_ID):
@@ -48,7 +47,7 @@ def exercise(request, Exercise_ID, User_ID):
 
     exercise.save()
     user.save()
-    return render(request, 'userWeb/exercise.html', {'exercise':str(exercise)})
+    return render(request, 'userWeb/exercise.html', {'exercise':exercise.ExerciseInfo()})
 
 def CalcValue(User_ID, Exercise_ID):
     exercise = Exercise.objects.get(Name=Exercise_ID)
@@ -79,16 +78,14 @@ def CalcValue(User_ID, Exercise_ID):
 
     #부위별 가중치
     
-    print(value)
     if(exercise.ExerPart == "가슴"):
-        value *= user.Part1/(user.Part1+user.Part2+user.Part3+user.Part4)
+        value *= user.Part1/(user.Part1+user.Part2+user.Part3+user.Part4+1)
     elif(exercise.ExerPart == "하체"):
-        value *= user.Part2/(user.Part1+user.Part2+user.Part3+user.Part4)
+        value *= user.Part2/(user.Part1+user.Part2+user.Part3+user.Part4+1)
     elif(exercise.ExerPart == "전신"):
-        value *= user.Part3/(user.Part1+user.Part2+user.Part3+user.Part4)
+        value *= user.Part3/(user.Part1+user.Part2+user.Part3+user.Part4+1)
     else:
-        value *= user.Part4/(user.Part1+user.Part2+user.Part3+user.Part4)
-    print(value)
+        value *= user.Part4/(user.Part1+user.Part2+user.Part3+user.Part4+1)
     return value
 
 def list(request, User_ID):
@@ -96,29 +93,22 @@ def list(request, User_ID):
     exercise = Exercise.objects.all()
     data = {}
     for exer in exercise:
-        data[exer.Name+"|"+exer.ExerPart] = CalcValue(User_ID, exer.Name)
-    print(data)
+        data[exer.ExerPart+"|"+exer.Name] = CalcValue(User_ID, exer.Name)
     data = sorted(data.items(), key=operator.itemgetter(1), reverse=True)
-    print(dict(data))
     return render(request, 'userWeb/list.html', {'exercise':dict(data).keys()})
 
 def userlist(request, User_ID):
     user = User.objects.get(userID=User_ID)
     ulist = user.exerciselist_set.all()
-    return render(request, 'userWeb/list.html', {'exercise':ulist})
+    return render(request, 'userWeb/userlist.html', {'exercise':ulist})
 
 def userlistelement(request, User_ID, List_ID):
     exerlist = ((User.objects.get(userID=User_ID)).exerciselist_set.get(ListName = List_ID)).exerciselistelement_set.all()
-    return render(request, 'userWeb/list.html', {'exercise':exerlist})
+    return render(request, 'userWeb/userlistelement.html', {'exercise':exerlist})
 
-def test(request, U_ID, E_ID):
-    user = User.objects.get(userID=U_ID)
-    exercise = Exercise.objects.get(Name=E_ID) 
-    return render(request, 'userWeb/test.html', {'user':str(user), 'exercise':str(exercise)})
-
-def adduser(request, UserID_data, Password_data, Name_data, Age_data, Sex_data, Job_data, Height_data, Weight_data, BMI_data):
+def adduser(request, UserID_data, Password_data, Name_data, Age_data, Sex_data, Job_data, Height_data, Weight_data):
     if(User.objects.filter(userID = UserID_data)):
-        return render(request, 'userWeb/login.html', {'user':"이미 존재하는 User 입니다."})
+        return render(request, 'userWeb/user.html', {'user':"이미 존재하는 User 입니다."})
     newUser = User()
     newUser.userID = UserID_data
     newUser.Password = Password_data
@@ -126,9 +116,9 @@ def adduser(request, UserID_data, Password_data, Name_data, Age_data, Sex_data, 
     newUser.Age = Age_data
     newUser.Sex = Sex_data
     newUser.Job = Job_data
-    newUser.Height = Height_data
-    newUser.Weight = Weight_data
-    Bmi = newUser.Weight / (newUser.Height * newUser.Height/float(10000))
+    newUser.Height = float(Height_data)
+    newUser.Weight = float(Weight_data)
+    Bmi = (newUser.Weight * 10000) / (newUser.Height * newUser.Height)
     if(Bmi < 18.5):
         newUser.BMI = "저체중"
     elif(Bmi < 23):
@@ -138,24 +128,25 @@ def adduser(request, UserID_data, Password_data, Name_data, Age_data, Sex_data, 
     else:
         newUser.BMI = "비만"
     newUser.save()
-    return render(request, 'userWeb/login.html', {'user':newUser.getUserInfo})
+    return render(request, 'userWeb/user.html', {'user':newUser.getUserInfo})
 
 def addList(request, UserID_data, ListName_data):
     if(User.objects.filter(userID = UserID_data)):
         newList = ExerciseList()
         newList.user = User.objects.get(userID = UserID_data)
+        if(newList.user.exerciselist_set.filter(ListName = ListName_data)):
+            return render(request, 'userWeb/user.html', {'user':"!"})
         newList.ListName = ListName_data
         newList.save()
-        return render(request, 'userWeb/login.html', {'user':str(newList)})
-    return render(request, 'userWeb/login.html', {'user':"올바르지 못한 접근입니다."})
-
+        return render(request, 'userWeb/user.html', {'user':str(newList)})
+    return render(request, 'userWeb/user.html', {'user':"!"})
 
 def addListExer(request, UserID_data, ListName_data, ExerName_data):
-    user = User.objects.get(userID=U_ID)
+    user = User.objects.get(userID=UserID_data)
     exerlist = user.exerciselist_set.all()
-    if(exerlist.objects.filter(ListName = ListName_data)):
+    if(exerlist.filter(ListName = ListName_data)):
         if(Exercise.objects.filter(Name = ExerName_data)):
-            exerciseList = ExerciseList.objects.get(ListName = ListName_data)
+            exerciseList = exerlist.get(ListName = ListName_data)
             if(exerciseList.canAddExer(ExerName_data)):
                 exercise = Exercise.objects.get(Name=ExerName_data)
                 newListExer = ExerciseListElement()
@@ -198,5 +189,12 @@ def addListExer(request, UserID_data, ListName_data, ExerName_data):
                 user.save()
                 exercise.save()
 
-                return render(request, 'userWeb/login.html', {'user':str(newListExer)})
-    return render(request, 'userWeb/login.html', {'user':"올바르지 못한 접근입니다."})
+                return render(request, 'userWeb/user.html', {'user':str(newListExer)})
+    return render(request, 'userWeb/user.html', {'user':"올바르지 못한 접근입니다."})
+    
+def test(request, U_ID, E_ID):
+    user = User.objects.get(userID=U_ID)
+    exercise = Exercise.objects.get(Name=E_ID) 
+    return render(request, 'userWeb/test.html', {'user':str(user), 'exercise':str(exercise)})
+
+

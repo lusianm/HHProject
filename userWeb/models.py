@@ -16,8 +16,8 @@ class User(models.Model):
         Woman = "여성"
     Sex = models.CharField(choices=Sex_Choices.choices, max_length=20)
     Job = models.CharField(max_length=20)
-    Height = models.IntegerField()
-    Weight = models.IntegerField()
+    Height = models.FloatField()
+    Weight = models.FloatField()
     class BMI_Choices(models.TextChoices):
         LowWeight = "저체중"
         NomalWeight = "정상"
@@ -40,7 +40,7 @@ class ExerciseList(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     ListName = models.CharField(max_length = 20)
     def __str__(self):
-        return self.ListName
+        return str(self.user) + "|" + self.ListName
     def getExer(self):
         try:
             exer = self.exerciselistelement_set.all()
@@ -72,7 +72,9 @@ class ExerciseListElement(models.Model):
         Part4 = "복부"
     exercisePart = models.CharField(choices=ExerPart_Choices.choices, max_length=20, null=True)
     def __str__(self):
-        return str(self.exerciseName + "|")
+        return str(str(self.exerciseList) + "|" + self.exercisePart + "|" + self.exerciseName)
+    def ExerInfo(self):
+        return self.exercisePart + "|" + self.exerciseName
 
 class Exercise(models.Model):
     Name = models.CharField(max_length=40)
@@ -83,8 +85,8 @@ class Exercise(models.Model):
         Part4 = "복부"
     ExerPart = models.CharField(choices=ExerPart_Choices.choices, max_length=20)
     ExerciseDesc = models.CharField(max_length=200)
-    YoutubeLink = models.CharField(max_length=400, default='www.youtube.com')
-    AccuracyLink = models.CharField(max_length=400)
+    YoutubeLink = models.CharField(max_length=400, default='https://www.youtube.com/watch?v=Y3iDSy425gw')
+    AccuracyLink = models.CharField(max_length=400, default='www.youtube.com')
     #나이대별
     Age10 = models.IntegerField(default = 0)
     Age20 = models.IntegerField(default = 0)
@@ -99,5 +101,8 @@ class Exercise(models.Model):
     BMIH = models.IntegerField(default = 0)
     BMIO = models.IntegerField(default = 0)
     def __str__(self):
+        exerciseText = self.ExerPart + '|' + self.Name 
+        return exerciseText
+    def ExerciseInfo(self):
         exerciseText = self.Name + '|' + self.ExerPart + '|' + self.ExerciseDesc + '|' + self.YoutubeLink + '|' + self.AccuracyLink
         return exerciseText
