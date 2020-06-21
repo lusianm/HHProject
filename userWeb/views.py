@@ -6,8 +6,11 @@ def base(request):
     return render(request, 'userWeb/base.html')
 
 def login(request, User_ID):
-    user = User.objects.get(userID=User_ID)
-    return render(request, 'userWeb/user.html', {'user':user.getUserInfo})
+    if not User.objects.filter(userID=User_ID):
+        user = []
+    else:
+        user = User.objects.get(userID=User_ID).getUserInfo
+    return render(request, 'userWeb/user.html', {'user':user})
 
 
 def exercise(request, Exercise_ID, User_ID):
@@ -89,6 +92,8 @@ def CalcValue(User_ID, Exercise_ID):
     return value
 
 def list(request, User_ID):
+    if(not User.objects.filter(userID = User_ID)):
+        return render(request, 'userWeb/user.html', {'user':"!"})
     user = User.objects.get(userID=User_ID)
     exercise = Exercise.objects.all()
     data = {}
@@ -107,8 +112,8 @@ def userlistelement(request, User_ID, List_ID):
     return render(request, 'userWeb/userlistelement.html', {'exercise':exerlist})
 
 def adduser(request, UserID_data, Password_data, Name_data, Age_data, Sex_data, Job_data, Height_data, Weight_data):
-    if(User.objects.filter(userID = UserID_data)):
-        return render(request, 'userWeb/user.html', {'user':"이미 존재하는 User 입니다."})
+    if(not User.objects.filter(userID = UserID_data)):
+        return render(request, 'userWeb/user.html', {'user':"!"})
     newUser = User()
     newUser.userID = UserID_data
     newUser.Password = Password_data
@@ -190,7 +195,7 @@ def addListExer(request, UserID_data, ListName_data, ExerName_data):
                 exercise.save()
 
                 return render(request, 'userWeb/user.html', {'user':str(newListExer)})
-    return render(request, 'userWeb/user.html', {'user':"올바르지 못한 접근입니다."})
+    return render(request, 'userWeb/user.html', {'user':"!"})
     
 def test(request, U_ID, E_ID):
     user = User.objects.get(userID=U_ID)

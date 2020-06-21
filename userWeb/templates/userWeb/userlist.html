@@ -1,9 +1,7 @@
 {% if exercise %}
-    <ul>
-    {% for exer in exercise %}
-        {{exer.ListName}}<br>
-    {% endfor %}
-    </ul>
+{% for exer in exercise %}
+{{exer.ListName}}<br>
+{% endfor %}
 {% else %}
-    <p>!</p>
+{!}
 {% endif %}
