@@ -103,16 +103,24 @@ def list(request, User_ID):
     return render(request, 'userWeb/list.html', {'exercise':dict(data).keys()})
 
 def userlist(request, User_ID):
+    if(not User.objects.filter(userID = User_ID)):
+        return render(request, 'userWeb/user.html', {'user':"!"})
     user = User.objects.get(userID=User_ID)
+
+    if(not user.exerciselist_set.all()):
+        return render(request, 'userWeb/user.html', {'user':"!"})
     ulist = user.exerciselist_set.all()
+
     return render(request, 'userWeb/userlist.html', {'exercise':ulist})
 
 def userlistelement(request, User_ID, List_ID):
+    if(not ((User.objects.get(userID=User_ID)).exerciselist_set.get(ListName = List_ID)).exerciselistelement_set.all()):
+        return render(request, 'userWeb/user.html', {'user':"!"})
     exerlist = ((User.objects.get(userID=User_ID)).exerciselist_set.get(ListName = List_ID)).exerciselistelement_set.all()
     return render(request, 'userWeb/userlistelement.html', {'exercise':exerlist})
 
 def adduser(request, UserID_data, Password_data, Name_data, Age_data, Sex_data, Job_data, Height_data, Weight_data):
-    if(not User.objects.filter(userID = UserID_data)):
+    if(User.objects.filter(userID = UserID_data)):
         return render(request, 'userWeb/user.html', {'user':"!"})
     newUser = User()
     newUser.userID = UserID_data
@@ -197,6 +205,25 @@ def addListExer(request, UserID_data, ListName_data, ExerName_data):
                 return render(request, 'userWeb/user.html', {'user':str(newListExer)})
     return render(request, 'userWeb/user.html', {'user':"!"})
     
+def deleteList(request, UserID_data, ListName_data):
+    if(User.objects.filter(userID = UserID_data)):
+        if(User.objects.get(userID = UserID_data).exerciselist_set.filter(ListName = ListName_data)):
+            deleteList = User.objects.get(userID = UserID_data).exerciselist_set.get(ListName = ListName_data)
+            for exer in deleteList.exerciselistelement_set.all():
+                exer.delete()
+            deleteList.delete()
+            return render(request, 'userWeb/user.html', {'user':str(deleteList)})
+    return render(request, 'userWeb/user.html', {'user':"!"})
+
+def deleteListElement(request, UserID_data, ListName_data, ExerName_data):
+    if(User.objects.filter(userID = UserID_data)):
+        if(User.objects.get(userID = UserID_data).exerciselist_set.filter(ListName = ListName_data)):
+            if(User.objects.get(userID = UserID_data).exerciselist_set.get(ListName = ListName_data).exerciselistelement_set.filter(exerciseName = ExerName_data)):
+                exer = User.objects.get(userID = UserID_data).exerciselist_set.get(ListName = ListName_data).exerciselistelement_set.get(exerciseName = ExerName_data)
+                exer.delete()
+                return render(request, 'userWeb/user.html', {'user':str(exer)})
+    return render(request, 'userWeb/user.html', {'user':"!"})
+
 def test(request, U_ID, E_ID):
     user = User.objects.get(userID=U_ID)
     exercise = Exercise.objects.get(Name=E_ID) 

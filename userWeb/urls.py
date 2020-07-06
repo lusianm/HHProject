@@ -15,5 +15,7 @@ urlpatterns = [
     path('UserListElement/<User_ID>/<List_ID>', views.userlistelement, name='userlistelement'),
     path('AddList/<UserID_data>/<ListName_data>', views.addList, name='addList'),
     path('AddListExer/<UserID_data>/<ListName_data>/<ExerName_data>', views.addListExer, name='addListExer'),
+    path('DeleteList/<UserID_data>/<ListName_data>', views.deleteList, name='deleteList'),
+    path('DeleteListExer/<UserID_data>/<ListName_data>/<ExerName_data>', views.deleteListElement, name='deleteListElement'),
     path('<U_ID>/<E_ID>', views.test, name='test'),
 ]
