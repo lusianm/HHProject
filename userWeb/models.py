@@ -11,10 +11,10 @@ class User(models.Model):
         age30 = 30
         age40 = 40
     Age = models.IntegerField(choices=Age_Choices.choices)
-    class Sex_Choices(models.TextChoices):
+    class Gender_Choices(models.TextChoices):
         Man = "남성"
         Woman = "여성"
-    Sex = models.CharField(choices=Sex_Choices.choices, max_length=20)
+    Gender = models.CharField(choices=Gender_Choices.choices, max_length=20)
     Job = models.CharField(max_length=20)
     Height = models.FloatField()
     Weight = models.FloatField()
@@ -32,7 +32,7 @@ class User(models.Model):
     def __str__(self):
         return self.userID + "|" + self.Name
     def getUserInfo(self):
-        userText = self.userID+'|'+self.Password+'|'+self.Name+'|'+str(self.Age)+'|'+self.Sex+'|'+self.Job+'|'+str(self.Height)+'|'+str(self.Weight)+'|'+str(self.BMI)
+        userText = self.userID+'|'+self.Password+'|'+self.Name+'|'+str(self.Age)+'|'+self.Gender+'|'+self.Job+'|'+str(self.Height)+'|'+str(self.Weight)+'|'+str(self.BMI)
         return userText
     
 
@@ -93,8 +93,8 @@ class Exercise(models.Model):
     Age30 = models.IntegerField(default = 0)
     Age40 = models.IntegerField(default = 0)
     #성별별
-    SexM = models.IntegerField(default = 0)
-    SexY = models.IntegerField(default = 0)
+    GenderM = models.IntegerField(default = 0)
+    GenderY = models.IntegerField(default = 0)
     #BMI별
     BMIL = models.IntegerField(default = 0)
     BMIN = models.IntegerField(default = 0)

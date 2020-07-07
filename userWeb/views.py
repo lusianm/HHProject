@@ -25,10 +25,10 @@ def exercise(request, Exercise_ID, User_ID):
     else:
         exercise.Age40 += 1
 
-    if(user.Sex == "남성"):
-        exercise.SexM += 1
+    if(user.Gender == "남성"):
+        exercise.GenderM += 1
     else:
-        exercise.SexY += 1
+        exercise.GenderY += 1
 
     if(user.BMI == "저체중"):
         exercise.BMIL += 1
@@ -65,10 +65,10 @@ def CalcValue(User_ID, Exercise_ID):
     else:
         value += exercise.Age40*0.30
 
-    if(user.Sex == "남성"):
-        value += exercise.SexM*0.20
+    if(user.Gender == "남성"):
+        value += exercise.GenderM*0.20
     else:
-        value += exercise.SexY*0.20
+        value += exercise.GenderY*0.20
 
     if(user.BMI == "저체중"):
         value += exercise.BMIL*0.5
@@ -119,7 +119,7 @@ def userlistelement(request, User_ID, List_ID):
     exerlist = ((User.objects.get(userID=User_ID)).exerciselist_set.get(ListName = List_ID)).exerciselistelement_set.all()
     return render(request, 'userWeb/userlistelement.html', {'exercise':exerlist})
 
-def adduser(request, UserID_data, Password_data, Name_data, Age_data, Sex_data, Job_data, Height_data, Weight_data):
+def adduser(request, UserID_data, Password_data, Name_data, Age_data, Gender_data, Job_data, Height_data, Weight_data):
     if(User.objects.filter(userID = UserID_data)):
         return render(request, 'userWeb/user.html', {'user':"!"})
     newUser = User()
@@ -127,7 +127,7 @@ def adduser(request, UserID_data, Password_data, Name_data, Age_data, Sex_data, 
     newUser.Password = Password_data
     newUser.Name = Name_data
     newUser.Age = Age_data
-    newUser.Sex = Sex_data
+    newUser.Gender = Gender_data
     newUser.Job = Job_data
     newUser.Height = float(Height_data)
     newUser.Weight = float(Weight_data)
@@ -177,10 +177,10 @@ def addListExer(request, UserID_data, ListName_data, ExerName_data):
                 else:
                     exercise.Age40 += 10
 
-                if(user.Sex == "남성"):
-                    exercise.SexM += 10
+                if(user.Gender == "남성"):
+                    exercise.GenderM += 10
                 else:
-                    exercise.SexY += 10
+                    exercise.GenderY += 10
 
                 if(user.BMI == "저체중"):
                     exercise.BMIL += 10

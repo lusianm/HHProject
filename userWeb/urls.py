@@ -8,7 +8,7 @@ urlpatterns = [
     path('', views.base, name='base'),
     path('Exercise/<Exercise_ID>/<User_ID>', views.exercise, name='exercise'),
     path('Login/<User_ID>', views.login, name='login'),
-    path('AddUser/<UserID_data>/<Password_data>/<Name_data>/<Age_data>/<Sex_data>/<Job_data>/<Height_data>/<Weight_data>',
+    path('AddUser/<UserID_data>/<Password_data>/<Name_data>/<Age_data>/<Gender_data>/<Job_data>/<Height_data>/<Weight_data>',
      views.adduser, name='adduser'),
     path('List/<User_ID>', views.list, name='list'),
     path('UserList/<User_ID>', views.userlist, name='userlist'),
